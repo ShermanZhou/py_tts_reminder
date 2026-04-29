@@ -1,0 +1,11 @@
+- time: "08:30"
+  read: true
+  description: "Morning market check"
+
+- time: "10:00"
+  read: false
+  description: "This one is skipped because read is false"
+
+- time: "14:45"
+  read: true
+  description: "Review open positions"
