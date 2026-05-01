@@ -1,0 +1,1 @@
+pyinstaller tts_reminder.py
