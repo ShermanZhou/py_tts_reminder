@@ -11,7 +11,8 @@ from pathlib import Path
 import pyttsx3
 import yaml
 
-TIME_24H_RE = re.compile(r"^([01]\d|2[0-3]):([0-5]\d)$")
+TIME_24H_RE = re.compile(r"^([01]?\d|2[0-3]):([0-5]\d)$")
+REMINDER_LEAD_MINUTES = 3
 
 
 @dataclass
@@ -35,7 +36,7 @@ def parse_item_time(value: str, index: int) -> dt_time:
 
 def reminder_times_for_today(item_time: dt_time, now: datetime) -> tuple[datetime, datetime]:
 	event_dt = datetime.combine(now.date(), item_time)
-	trigger_dt = event_dt - timedelta(minutes=5)
+	trigger_dt = event_dt - timedelta(minutes=REMINDER_LEAD_MINUTES)
 	return trigger_dt, event_dt
 
 
@@ -68,13 +69,15 @@ def load_reminders(items_path: Path) -> list[Reminder]:
 			raise ValueError(f"Item {i}: 'description' must be a non-empty string.")
 
 		if not read_flag:
-			continue
+			description = item.get("time")
+		else:
+			description = description.strip()
 
 		trigger_at, event_at = reminder_times_for_today(item_time, now)
 		reminders.append(
 			Reminder(
 				item_time=item_time,
-				description=description.strip(),
+				description=description,
 				trigger_at=trigger_at,
 				event_at=event_at,
 			)

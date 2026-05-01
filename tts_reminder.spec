@@ -1,26 +1,12 @@
 # -*- mode: python ; coding: utf-8 -*-
 
-from PyInstaller.utils.hooks import collect_submodules
-
-
-hiddenimports = (
-    collect_submodules('pyttsx3')
-    + collect_submodules('yaml')
-    + [
-        'pyttsx3.drivers',
-        'pyttsx3.drivers.sapi5',
-        'pythoncom',
-        'pywintypes',
-    ]
-)
-
 
 a = Analysis(
     ['tts_reminder.py'],
     pathex=[],
     binaries=[],
     datas=[],
-    hiddenimports=hiddenimports,
+    hiddenimports=[],
     hookspath=[],
     hooksconfig={},
     runtime_hooks=[],
