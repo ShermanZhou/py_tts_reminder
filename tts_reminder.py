@@ -14,6 +14,8 @@ import yaml
 TIME_24H_RE = re.compile(r"^([01]?\d|2[0-3]):([0-5]\d)$")
 REMINDER_LEAD_MINUTES = 3
 
+# this is to  wakeup bluetooth
+prefix = "Alert: "
 
 @dataclass
 class Reminder:
@@ -65,12 +67,11 @@ def load_reminders(items_path: Path) -> list[Reminder]:
 			raise ValueError(f"Item {i}: 'read' must be true or false.")
 
 		description = item.get("description")
-		if not isinstance(description, str) or not description.strip():
-			raise ValueError(f"Item {i}: 'description' must be a non-empty string.")
-
 		if not read_flag:
 			description = item.get("time")
 		else:
+			if not isinstance(description, str) or not description.strip():
+				raise ValueError(f"Item {i}: 'description' must be a non-empty string.")
 			description = description.strip()
 
 		trigger_at, event_at = reminder_times_for_today(item_time, now)
@@ -152,7 +153,7 @@ def run_scheduler(items_path: Path) -> None:
 
 		if next_reminder.trigger_at <= now <= next_reminder.event_at:
 			print(f"Reading now: {next_reminder.description}", flush=True)
-			engine.say(next_reminder.description)
+			engine.say(f"{prefix}{next_reminder.description}")
 			engine.runAndWait()
 
 			next_reminder.processed = True
